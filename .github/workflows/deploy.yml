@@ -46,6 +46,7 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/day4-site:latest
+                ${{ secrets.DOCKER_PASSWORD }}/day4-site:latest
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
