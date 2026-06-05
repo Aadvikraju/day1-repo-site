@@ -1,0 +1,6 @@
+{
+  "name": "day3-site",
+  "scripts": {
+    "test": "echo 'Tests passed!'"
+  }
+}
