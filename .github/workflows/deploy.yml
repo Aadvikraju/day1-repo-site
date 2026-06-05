@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -22,16 +22,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
       
       - name: Install dependencies
-        run: npm Install
+        run: npm install
       
       - name: Run tests
-        run: npm test || echo "No tests yet - add later"
+        run: npm test || echo "No tests defined yet"
       
-      - name: Build
-        run: echo "Build step - static site no build needed"
+      - name: Build step
+        run: echo "Static site - no build needed"
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
