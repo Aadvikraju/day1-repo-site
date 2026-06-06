@@ -25,3 +25,29 @@ Docker image creation and containerizationDocker Hub registry managementGitHub A
 ### **Bonus: Add this badge on top**
 ```markdown
 ![CI/CD](https://github.com/rajuraichalwar/day1-repo-site/actions/workflows/docker.yml/badge.svg)
+
+## Day 5: CI/CD Pipeline Deployment & Troubleshooting
+
+### Objective
+Deploy containerized application from GitHub to AWS EC2 using GitHub Actions + Docker with zero manual intervention.
+
+### Challenges Faced & Solutions
+
+**1. SSH Authentication Failed - Permission Denied (publickey)**
+- **Error:** `ssh: connect to host 13.232.201.21 port 22: Permission denied (publickey)`
+- **Root Cause:** SSH key file had incorrect Windows permissions and was not in expected path
+- **Solution:** 
+    - Moved `Docker-key` to `C:\Users\Hello\Desktop\Docker-key`
+    - Fixed permissions: `icacls "Docker-key" /reset && icacls "Docker-key" /grant:r "Hello:R" /inheritance:d`
+    - Used EC2 Instance Connect as backup access method
+
+**2. Docker Socket Permission Denied**
+- **Error:** `permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock`
+- **Root Cause:** `ubuntu` user not added to docker group
+- **Solution:**
+```bash
+sudo usermod -aG docker ubuntu
+sudo chmod 666 /var/run/docker.sock
+✅ Automated deployment pipeline working end-to-end✅ Deployment time reduced from 15 min manual → 1 min 2 sec automated✅ GitHub Actions workflow passing with green status✅ Application live on EC2: http://13.232.201.21
+
+
