@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
       id-token: write
     
     steps:
@@ -36,8 +35,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
       
       - name: Login to Docker Hub
-        uses: docker/login-action@v3  # <- ye line 2 space andar
-        with:                          # <- ye bhi 2 space andar
+        uses: docker/login-action@v3
+        with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
@@ -45,10 +44,33 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/day1-repo-site
+          tags: ${{ secrets.DOCKER_USERNAME }}/day1-repo-site:latest
       
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to EC2 with zero downtime
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Pull new image
+            docker pull rajuraichalwar/day1-repo-site:latest
+            
+            # Run new container on port 8080 for testing
+            docker stop myapp-new || true
+            docker rm myapp-new || true
+            docker run -d --name myapp-new -p 8080:80 rajuraichalwar/day1-repo-site:latest
+            
+            # Wait 10 sec for container to start
+            sleep 10
+            
+            # Health check: if fail, remove new container and exit
+            curl -f http://localhost:8080 || (docker rm -f myapp-new && echo "Health check failed, rollback" && exit 1)
+            
+            # If health check pass, switch traffic
+            docker stop myapp || true
+            docker rm myapp || true
+            docker rename myapp-new myapp
+            
+            # Show logs for verification
+            docker logs myapp --tail 20
