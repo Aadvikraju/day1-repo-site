@@ -51,3 +51,4 @@ sudo chmod 666 /var/run/docker.sock
 ✅ Automated deployment pipeline working end-to-end✅ Deployment time reduced from 15 min manual → 1 min 2 sec automated✅ GitHub Actions workflow passing with green status✅ Application live on EC2: http://13.232.201.21
 
 
+
