@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/day4-site:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/day1-repo-site
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
